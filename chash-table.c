@@ -70,11 +70,12 @@ void insertItem(Item* item, Hashtable* ht) {
 }
 
 void printTable(Hashtable* ht) {
+	printf("idx %8c count\tval\n\n", ' ');
 	for (int i = 0; i < ht->capacity; i++) {
 		if (ht->table[i] != NULL) {
 			Item* currentItem = ht->table[i];
 			while (currentItem != NULL) {
-				printf("%3d %10lu %s\n", i, currentItem->count, (char*) currentItem->val);
+				printf("%3d %10lu\t\t%s\n", i, currentItem->count, (char*) currentItem->val);
 				currentItem = currentItem->next;
 			}
 		}
@@ -114,7 +115,7 @@ void freeTable(Hashtable* ht) {
 }
 
 int main() {
-	Hashtable* ht = newTable(12);
+	Hashtable* ht = newTable(100);
 	insertItem(newItem("apple"), ht);
 	insertItem(newItem("apple"), ht);
 	insertItem(newItem("turtle"), ht);
