@@ -25,7 +25,6 @@ Item* newItem(void* val);
 size_t getIndex(size_t key, Hashtable* ht);
 void insertItem(Item* item, Hashtable* ht);
 void printTable(Hashtable* ht);
-void printTopN(Hashtable* ht, unsigned int n);
 int compare(const void* a, const void* b);
 void freeTable(Hashtable* ht);
 

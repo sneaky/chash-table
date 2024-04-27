@@ -61,6 +61,7 @@ void insertItem(Item* item, Hashtable* ht) {
 				currentItem->count++;
 			} else {
 				currentItem->next = item;
+				currentItem->next->count++;
 			}
 		}
 	}
@@ -73,37 +74,11 @@ void printTable(Hashtable* ht) {
 		if (ht->table[i] != NULL) {
 			Item* currentItem = ht->table[i];
 			while (currentItem != NULL) {
-				printf("%d %10lu %s\n", i, currentItem->count, (char*) currentItem->val);
+				printf("%3d %10lu %s\n", i, currentItem->count, (char*) currentItem->val);
 				currentItem = currentItem->next;
 			}
 		}
 	}
-}
-
-void printTopN(Hashtable* ht, unsigned int n) {
-	Item* sortableItemArray[ht->capacity];
-	unsigned int arrayIndex = 0;
-
-	for (int i = 0; i < ht->capacity; i++) {
-		for (Item* currentElement = ht->table[i]; currentElement != NULL && arrayIndex < ht->capacity; currentElement = currentElement->next) {
-			sortableItemArray[arrayIndex] = currentElement;
-			arrayIndex++;
-		}
-	}
-
-	qsort(sortableItemArray, arrayIndex, sizeof(Item*), compare);
-
-	int j = 0;
-	while (sortableItemArray[j] != NULL) {
-		printf("%10lu %s\n", sortableItemArray[j]->count, (char*) sortableItemArray[j]->val);
-		j++;
-	}
-
-	FILE* f = fopen("log.txt", "w");
-	for (int i = 0; i < arrayIndex; i++) {
-		fprintf(f, "%10lu %s\n", sortableItemArray[i]->count, (char*) sortableItemArray[i]->val);
-	}
-	fclose(f);
 }
 
 int compare(const void* a, const void* b) {
@@ -157,6 +132,6 @@ int main() {
 	insertItem(newItem("stuff"), ht);
 
 	printTable(ht);
-	
+
 	return 0;
 }
