@@ -28,7 +28,7 @@ size_t hash(unsigned char* str) {
 	size_t hash = 5381;
 	int c;
 
-	while (c = *str++) {
+	while ((c = *str++)) { // using double paren to get rid of compiler warning
 		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 	}
 
