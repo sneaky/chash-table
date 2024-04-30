@@ -27,5 +27,7 @@ void insertItem(Item* item, Hashtable* ht);
 void printTable(Hashtable* ht);
 int compare(const void* a, const void* b);
 void freeTable(Hashtable* ht);
+bool contains(void* val, Hashtable* ht);
+//void deleteItem(size_t key, Hashtable* ht);
 
 #endif

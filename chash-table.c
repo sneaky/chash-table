@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "chash-table.h"
 
@@ -114,8 +115,62 @@ void freeTable(Hashtable* ht) {
 	free(ht);
 }
 
+bool contains(void* val, Hashtable* ht) {
+	size_t key = hash(val);
+	size_t index = getIndex(key, ht);
+	Item* current = ht->table[index];
+	if (current == NULL) { return false; }
+	while (current->next != NULL && strcmp((char*) current->val, (char*) val) != 0) {
+		current = current->next;		
+	}
+
+	if (strcmp((char*) current->val, (char*) val) != 0) {
+		return false;
+	}
+
+	return true;
+}
+
+bool deleteItem(void* val, Hashtable* ht) {
+	size_t key = hash(val);
+	if (!contains(val, ht)) {
+		printf("Testing: val doesn't exist...\n");
+		return false; 
+	}
+	size_t index = getIndex(key, ht);
+	Item* current = ht->table[index];
+	
+	// if item we want to delete is chained
+	if (strcmp((char*) current->val, val) != 0) {
+		// get previous item
+		Item* prev = NULL;
+		while (current->next != NULL && strcmp((char*) current->val, (char*) val) != 0) {
+			if (strcmp((char*) current->next->val, (char*) val) == 0) {
+				prev = current;
+			}
+			current = current->next;
+		}
+		
+		current->count--;
+		if (current->count == 0) {
+			// attach prev to current->next
+			prev->next = current->next;
+			free(current);
+		}
+		return true;
+	}
+	
+	// item we want to delete is not chained
+	current->count--;
+	if (current->count == 0) {
+		ht->table[index] = NULL;
+		free(ht->table[index]);
+	}
+	return true;
+}
+
 int main() {
-	Hashtable* ht = newTable(100);
+	Hashtable* ht = newTable(10);
 	insertItem(newItem("apple"), ht);
 	insertItem(newItem("apple"), ht);
 	insertItem(newItem("turtle"), ht);
@@ -131,7 +186,15 @@ int main() {
 	insertItem(newItem("panda"), ht);
 	insertItem(newItem("people"), ht);
 	insertItem(newItem("stuff"), ht);
-
+	printf("Testing contains(apple, ht): should be true:%s\t\n", contains("apple", ht) ? "true" : "false");
+	printf("Testing contains(snapple, ht): should be false:%s\t\n", contains("snapple", ht) ? "true" : "false");
+	printTable(ht);
+	bool test1 = deleteItem("apple", ht);
+	bool test2 = deleteItem("true", ht);
+	bool test3 = deleteItem("totalitarian", ht);
+	printf("Testing deleteItem(apple, ht): should be true:%s\t\n", test1 ? "true" : "false");
+	printf("Testing deleteItem(true, ht): should be true:%s\t\n", test2 ? "true" : "false");
+	printf("Testing deleteItem(totalitarian, ht): should be false:%s\t\n", test3 ? "true" : "false");
 	printTable(ht);
 
 	return 0;
